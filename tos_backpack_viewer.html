@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<!-- Last modified : 2021.08.30 18:12 -->
+<head>
+    <title>神魔之塔卡匣檢視器</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="蒼曜(tinghan33704)">
+    <link rel="stylesheet" href="../tos_tool_data/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../tos_tool_data/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../tos_tool_data/css/common.css">
+    <link rel="stylesheet" href="./css/index.css">
+	<link rel="icon" type="image/png" href="../tos_tool_data/img/favicon/backpack_favicon.png"/>
+    <script src="../tos_tool_data/js/jquery.min.js"></script>
+    <script src="../tos_tool_data/js/popper.min.js"></script>
+    <script src="../tos_tool_data/js/bootstrap.min.js"></script>
+    <script src="./js/index.js"></script>
+    <script src="../tos_tool_data/js/monster_data.js"></script>
+    <script src="../tos_tool_data/js/constant.js"></script>
+    <script src="../tos_tool_data/js/common.js"></script>
+</head>
+    
+<body>
+    <div class="side_navigation"></div>
+
+    <div id="uidPanel" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" id="modal-close" data-dismiss='modal'>&times;</button>
+          </div>
+          <div class="modal-body"></div>
+        </div>
+      </div>
+    </div>
+	
+    <div class="container-fluid sticky-top bg-dark py-1" id="top-bar">
+        <div class="row">
+            <div class="col-12 col-lg-6" id="tool_banner">
+                <div class="row">
+                    <div class="col-2 col-lg-2" id="side-nav" onclick="toggleSideNavigation()">
+                        <div class="navbar-brand toggle-navbar"><i class="fa fa-bars"></i></div>
+                    </div>
+                    <div class="col-8 col-lg-8" id="tool_title">
+                        <a class="navbar-brand" id="navtitle" href="#">神魔之塔卡匣檢視器</a>
+                        <a class="navbar-brand" target="_blank" href="https://forum.gamer.com.tw/Co.php?bsn=23805&sn=3619702"><i class="fa fa-question-circle"></i></a>
+                    </div>
+                    <div class="col-2 col-lg-2"></div>
+                </div>
+            </div>
+            <div class="col-12 col-lg-6 uid-banner"></div>
+        </div>
+    </div>
+    <div class="filter container">
+        <div class="row">
+            <div class="col-12 mt-5">
+				<div class="alert alert-primary" id="notification" role="alert">
+					<div class="row">
+						<div class="col-11" id="notification_text"></div>
+						<div class="col-1" id="close_notification">&times;</div>
+					</div>
+				</div>
+            </div>
+        </div>
+        <div class="row seal-row">
+			<div class='col-12 col-md-3 col-lg-3 seal-nav seal-nav-active' id='showCoinSeal'>古幣封印</div>
+			<div class='col-12 col-md-3 col-lg-3 seal-nav' id='showStoneSeal'>魔法石封印</div>
+			<div class='col-12 col-md-3 col-lg-3 seal-nav' id='showIndSeal'>獨立封印</div>
+			<div class='col-12 col-md-3 col-lg-3 seal-nav' id='showCrossSeal'>合作封印</div>
+        </div>
+		<div class="row card-row"></div>
+        <div class="copyright"></div>
+    </div>
+    <button type="button" id="inventory-btn" class="inventory">
+        <i class="fa fa-archive"></i>
+    </button>
+    <button type="button" id="changeTheme-btn" class="changeTheme">
+        <i class="fa fa-adjust"></i>
+    </button>
+    <button type="button" id="toTop-btn" class="toTop"></button>
+    
+</body>
+</html>

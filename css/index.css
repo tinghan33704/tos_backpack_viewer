@@ -1,0 +1,92 @@
+
+.uid-banner {
+    font-size: 1.5em;
+    color: var(--text_color_uid);
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+}
+
+@media (max-width: 992px) {
+	.uid-banner {
+		justify-content: center;
+	}
+}
+
+.seal-row {
+	margin-bottom: 5px;
+    font-size: 1.6em;
+}
+
+.genre-name {
+	font-size: 1.6em;
+	margin: 15px 0;
+	padding: 10px;
+	font-weight: bold;
+	text-align: center;
+	background-color: var(--div_series_genre_background);
+	cursor: default;
+}
+
+.genre-name-allCollected {
+	color: var(--text_series_genre_all);
+	background-color: var(--div_series_genre_all_background);
+}
+
+.popover {
+	max-width: 900px;
+	min-width: 0;
+	width: auto;
+}
+
+.popover-body {
+    width: 100%;
+    font-size: 1.4em;
+    word-wrap: break-word;
+    text-align: left;
+    color: var(--text_tooltip_color);
+    border-radius: 5px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.series_result img {
+	width: 80%;
+	text-align: center;
+	padding: 10px;
+}
+
+.result_monster_block {
+	padding: 10px;
+	width: 100px;
+}
+
+.monster_name {
+	padding-top: 10px;
+}
+
+.monster_img, .monster_img_gray, .tooltip_monster_img, .tooltip_monster_img_gray {
+    width: 100%;
+}
+
+.monster_img, .monster_img_gray {
+    cursor: pointer;
+}
+
+.monster_img_gray {
+	-webkit-filter: grayscale(100%);
+	filter: grayscale(100%) opacity(30%);
+}
+
+.tooltip_monster_img_gray {
+	-webkit-filter: grayscale(100%);
+	filter: grayscale(100%) opacity(100%) brightness(0.8);
+}
+
+.monster_img:focus, .monster_img_gray:focus, .tooltip_monster_img:focus, .tooltip_monster_img_gray:focus {
+    outline: 3.5px #FF6666 dashed;
+}
+
+.inventory {
+    bottom: 5rem;
+}
