@@ -63,14 +63,16 @@ function showSeal(name)
 		
 		allCardStr = allCardTitle[Math.floor(Math.random()*(allCardTitle.length))]
 		
+		cardStr += '<div class="col-6"><div class="row genre-row">'
 		cardStr += `
-			<div class='col-12 genre-name ${hasCard && 'genre-name-allCollected'}' ${hasCard && `title=${allCardStr}`}>${genre}</div>
+			<div class='col-12 genre-name ${hasCard ? 'genre-name-allCollected' : ''}' ${hasCard ? `title=${allCardStr}` : ''}>${genre}</div>
 			${sealData[genre].map(id => {
 				const sk_str = renderMonsterSeriesInfo(genre, Array.isArray(id) ? id : [id])
 				return renderMonsterSeriesImage(genre, Array.isArray(id) ? id : [id], sk_str)
 			}).join('')}
 			<div class='col-12'><hr /></div>
 		`
+		cardStr += '</div></div>'
 	})
 	
 	$('.card-row').html(cardStr)
@@ -181,7 +183,7 @@ function switchGetInventory(state)
 
 function renderMonsterSeriesInfo(genreName, monsters) {
 	return `
-		<div class='row'>
+		<div class='row' style='padding: 0 4px;'>
 			${monsters.map(id => {
 				const monster = monster_data.find((element) => {
 					return element.id == id

@@ -33,6 +33,10 @@
 	background-color: var(--div_series_genre_all_background);
 }
 
+.genre-row {
+	padding: 0 10px;
+}
+
 .popover {
 	max-width: 900px;
 	min-width: 0;
@@ -43,22 +47,26 @@
     width: 100%;
     font-size: 1.4em;
     word-wrap: break-word;
-    text-align: left;
+    text-align: center;
     color: var(--text_tooltip_color);
     border-radius: 5px;
     overflow-x: hidden;
     overflow-y: auto;
 }
 
+.series_result {
+	padding: 4px;
+}
+
 .series_result img {
-	width: 80%;
+	width: 100%;
 	text-align: center;
-	padding: 10px;
 }
 
 .result_monster_block {
-	padding: 10px;
-	width: 100px;
+	padding: 2px;
+	width: 80px;
+	text-align: center;
 }
 
 .monster_name {
