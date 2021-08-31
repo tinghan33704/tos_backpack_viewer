@@ -18,6 +18,13 @@
     font-size: 1.6em;
 }
 
+.seal-nav {
+	font-weight: normal;
+}
+.seal-nav-active {
+	font-weight: bold;
+}
+
 .genre-name {
 	font-size: 1.6em;
 	margin: 15px 0;
