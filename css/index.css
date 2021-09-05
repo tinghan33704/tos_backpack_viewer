@@ -105,3 +105,16 @@
 .inventory {
     bottom: 5rem;
 }
+
+.monsterCount, .monsterCount_gray {
+    width: 100%;
+    text-align: center;
+    color: var(--text_color_uid);
+    font-weight: bold;
+    font-size: 1em;
+}
+
+.monsterCount_gray {
+	-webkit-filter: grayscale(100%);
+	filter: grayscale(100%) opacity(30%);
+}

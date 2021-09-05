@@ -1,7 +1,7 @@
 const tool_id = 'backpack';
 
 let theme = 'normal';
-let playerData = {uid: '', card: []}
+let playerData = {uid: '', card: [], info: {}}
 let currentSeal = ''
 let sealContentMonster = {}
 
@@ -63,7 +63,7 @@ function showSeal(name)
 		
 		allCardStr = allCardTitle[Math.floor(Math.random()*(allCardTitle.length))]
 		
-		cardStr += '<div class="col-6"><div class="row genre-row">'
+		cardStr += '<div class="col-12 col-sm-6"><div class="row genre-row">'
 		cardStr += `
 			<div class='col-12 genre-name ${hasCard ? 'genre-name-allCollected' : ''}' ${hasCard ? `title=${allCardStr}` : ''}>${genre}</div>
 			${sealData[genre].map(id => {
@@ -188,13 +188,16 @@ function renderMonsterSeriesInfo(genreName, monsters) {
 				const monster = monster_data.find((element) => {
 					return element.id == id
 				})
-				const monster_attr = monster.attribute
+				const monster_attr = !monster?.attribute?.length ? '' : monster?.attribute
 				const notInInventory = !playerData.card.includes(monster.id)
 				return `
 					<div class='result_monster_block'>
-						<img class='tooltip_monster_img${notInInventory ? '_gray' : ''}' src='../tos_tool_data/img/monster/${monster.id}.png' title='${monster.name}' onerror='this.src=\'..\/tos_tool_data\/img\/monster\/noname_${attr_zh_to_en[monster_attr]}.png\''></img>
+						<img class='tooltip_monster_img${notInInventory ? '_gray' : ''}' src='../tos_tool_data/img/monster/${monster.id}.png' title='${monster.name}' onerror='monsterErrorImage(this, \`${monster_attr}\`)'></img>
 						<div class='monsterId${notInInventory ? '_gray' : ''}'>
 							<a href='https://tos.fandom.com/zh/wiki/${monster.id}' target='_blank'>${paddingZeros(monster.id, 3)}</a>
+						</div>
+						<div class='monsterCount${notInInventory ? '_gray' : ''}'>
+							×${playerData?.info?.[id]?.number || 0}
 						</div>
 					</div>
 				`
@@ -206,13 +209,13 @@ function renderMonsterSeriesInfo(genreName, monsters) {
 function renderMonsterSeriesImage(genreName, series, tooltip_content) {
 	const finalStage = ['新世紀福音戰士石抽', 'ROCKMAN X DiVE', '假面騎士'].includes(genreName) ? series[0] : series[series.length - 1]
 	const monster = monster_data.find(monster => monster.id === finalStage)
-    const monster_attr = monster.attribute;
+	const monster_attr = !monster?.attribute?.length ? '' : monster?.attribute
     const hasSpecialImage = 'specialImage' in monster && monster.specialImage;
     const notInInventory = !series.some(id => playerData.card.includes(id))
 	
     return `
         <div class='col-4 col-md-3 col-lg-2 series_result'>
-            <img class='monster_img${notInInventory ? '_gray' : ''}' src='../tos_tool_data/img/monster/${monster.id}.png' onerror='this.src="../tos_tool_data/img/monster/noname_${attr_zh_to_en[monster_attr]}.png"' onfocus=${hasSpecialImage ? `this.src="../tos_tool_data/img/monster/${monster.id}_sp.png"` : null} onblur=${hasSpecialImage ? `this.src="../tos_tool_data/img/monster/${monster.id}.png"` : null} tabindex=${monster.id.toString().replace('?', '')} data-toggle='popover' data-title='' data-content="${tooltip_content}"></img>
+            <img class='monster_img${notInInventory ? '_gray' : ''}' src='../tos_tool_data/img/monster/${monster.id}.png' onerror='monsterErrorImage(this, "${monster_attr}")' onfocus=${hasSpecialImage ? `this.src="../tos_tool_data/img/monster/${monster.id}_sp.png"` : null} onblur=${hasSpecialImage ? `this.src="../tos_tool_data/img/monster/${monster.id}.png"` : null} tabindex=${monster.id.toString().replace('?', '')} data-toggle='popover' data-title='' data-content="${tooltip_content}"></img>
 			<!-- special image preload -->
 			<img class='monster_img${notInInventory ? '_gray' : ''}' style="display: none;" src=${hasSpecialImage ? `../tos_tool_data/img/monster/${monster.id}_sp.png` : ''}>
 			<!-- -->
@@ -222,4 +225,8 @@ function renderMonsterSeriesImage(genreName, series, tooltip_content) {
 
 function renderResult() {
 	showSeal(currentSeal)
+}
+
+function monsterErrorImage(img, attr) {
+	img.src = `../tos_tool_data/img/monster/noname${attr.length > 0 ? `_${attr_zh_to_en[attr]}` : ''}.png`
 }
