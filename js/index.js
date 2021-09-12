@@ -14,11 +14,21 @@ $(document).ready(function() {
 	$('#showIndSeal').on("click", (event) => selectSeal('獨立封印', event))
 	$('#showCrossSeal').on("click", (event) => selectSeal('合作封印', event))
 	
-	$('#showCoinSeal').click()
-	$('.uid-banner').html(playerData?.uid ? `<div>UID: ${playerData.uid}</div>` : '')
-	
-	!playerData?.uid.length && $('#inventory-btn').click()
+	if(location.search) {
+		$('.card-row').html(loadingPanel())
+		readUserIdFromUrl()
+	}
+	else {
+		$('#showCoinSeal').click()
+		$('.uid-banner').html(playerData?.uid ? `<div>UID: ${playerData.uid}</div>` : '')
+	}
 });
+
+function loadingPanel() {
+	return `
+		<div class="col-12 loadingPanel">載入資料中...</div>
+	`
+}
 
 function selectSeal(name, event)
 {
@@ -50,7 +60,7 @@ function showSeal(name)
 	]
 	
 	Object.keys(sealData).forEach(genre => {
-		let hasCard = true
+		let hasCard = false
 		sealData[genre].every(monster => {
 			if(Array.isArray(monster)) {
 				hasCard = monster.some(id => playerData.card.includes(id))
@@ -186,15 +196,15 @@ function renderMonsterSeriesInfo(genreName, monsters) {
 		<div class='row' style='padding: 0 4px;'>
 			${monsters.map(id => {
 				const monster = monster_data.find((element) => {
-					return element.id == id
+					return element.id === id
 				})
 				const monster_attr = !monster?.attribute?.length ? '' : monster?.attribute
-				const notInInventory = !playerData.card.includes(monster.id)
+				const notInInventory = !playerData.card.includes(monster?.id)
 				return `
 					<div class='result_monster_block'>
-						<img class='tooltip_monster_img${notInInventory ? '_gray' : ''}' src='../tos_tool_data/img/monster/${monster.id}.png' title='${monster.name}' onerror='monsterErrorImage(this, \`${monster_attr}\`)'></img>
+						<img class='tooltip_monster_img${notInInventory ? '_gray' : ''}' src='../tos_tool_data/img/monster/${monster?.id}.png' title='${monster?.name ?? ''}' onerror='monsterErrorImage(this, \`${monster_attr}\`)'></img>
 						<div class='monsterId${notInInventory ? '_gray' : ''}'>
-							<a href='https://tos.fandom.com/zh/wiki/${monster.id}' target='_blank'>${paddingZeros(monster.id, 3)}</a>
+							<a href='https://tos.fandom.com/zh/wiki/${monster?.id}' target='_blank'>${monster?.id ? paddingZeros(monster.id, 3) : '???'}</a>
 						</div>
 						<div class='monsterCount${notInInventory ? '_gray' : ''}'>
 							×${playerData?.info?.[id]?.number || 0}
@@ -210,14 +220,14 @@ function renderMonsterSeriesImage(genreName, series, tooltip_content) {
 	const finalStage = ['新世紀福音戰士石抽', 'ROCKMAN X DiVE', '假面騎士'].includes(genreName) ? series[0] : series[series.length - 1]
 	const monster = monster_data.find(monster => monster.id === finalStage)
 	const monster_attr = !monster?.attribute?.length ? '' : monster?.attribute
-    const hasSpecialImage = 'specialImage' in monster && monster.specialImage;
+    const hasSpecialImage = monster && 'specialImage' in monster && monster.specialImage;
     const notInInventory = !series.some(id => playerData.card.includes(id))
 	
     return `
         <div class='col-4 col-md-3 col-lg-2 series_result'>
-            <img class='monster_img${notInInventory ? '_gray' : ''}' src='../tos_tool_data/img/monster/${monster.id}.png' onerror='monsterErrorImage(this, "${monster_attr}")' onfocus=${hasSpecialImage ? `this.src="../tos_tool_data/img/monster/${monster.id}_sp.png"` : null} onblur=${hasSpecialImage ? `this.src="../tos_tool_data/img/monster/${monster.id}.png"` : null} tabindex=${monster.id.toString().replace('?', '')} data-toggle='popover' data-title='' data-content="${tooltip_content}"></img>
+            <img class='monster_img${notInInventory ? '_gray' : ''}' src='../tos_tool_data/img/monster/${monster?.id}.png' onerror='monsterErrorImage(this, "${monster_attr}")' onfocus=${hasSpecialImage ? `this.src="../tos_tool_data/img/monster/${monster?.id}_sp.png"` : null} onblur=${hasSpecialImage ? `this.src="../tos_tool_data/img/monster/${monster?.id}.png"` : null} tabindex=${monster?.id?.toString().replace('?', '')} data-toggle='popover' data-title='' data-content="${tooltip_content}"></img>
 			<!-- special image preload -->
-			<img class='monster_img${notInInventory ? '_gray' : ''}' style="display: none;" src=${hasSpecialImage ? `../tos_tool_data/img/monster/${monster.id}_sp.png` : ''}>
+			<img class='monster_img${notInInventory ? '_gray' : ''}' style="display: none;" src=${hasSpecialImage ? `../tos_tool_data/img/monster/${monster?.id}_sp.png` : ''}>
 			<!-- -->
         </div>
     `;
@@ -229,4 +239,17 @@ function renderResult() {
 
 function monsterErrorImage(img, attr) {
 	img.src = `../tos_tool_data/img/monster/noname${attr.length > 0 ? `_${attr_zh_to_en[attr]}` : ''}.png`
+}
+
+function readUserIdFromUrl() {
+	const code_array = location.search.split("?")[1].split("=")
+	
+	if(code_array[0] !== 'uid') {
+		errorAlert(1)
+		return
+	}
+	
+	const uid = code_array[1]
+	
+	getPlayerInventory('load', uid)
 }

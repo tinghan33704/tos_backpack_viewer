@@ -118,3 +118,10 @@
 	-webkit-filter: grayscale(100%);
 	filter: grayscale(100%) opacity(30%);
 }
+
+.loadingPanel {
+	text-align: center;
+    font-size: 1.6em;
+	color: var(--div_nav_active_background);
+	padding: 30px;
+}
