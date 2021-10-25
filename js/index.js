@@ -242,7 +242,7 @@ function monsterErrorImage(img, attr) {
 }
 
 function readUserIdFromUrl() {
-	const code_array = location.search.split("?")[1].split("=")
+	const code_array = location.search.split("?")[1].split("&")[0].split("=")
 	
 	if(code_array[0] !== 'uid') {
 		errorAlert(1)
