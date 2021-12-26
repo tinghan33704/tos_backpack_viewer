@@ -220,17 +220,60 @@ function renderMonsterSeriesImage(genreName, series, tooltip_content) {
 	const finalStage = ['新世紀福音戰士石抽', 'ROCKMAN X DiVE', '假面騎士'].includes(genreName) ? series[0] : series[series.length - 1]
 	const monster = monster_data.find(monster => monster.id === finalStage)
 	const monster_attr = !monster?.attribute?.length ? '' : monster?.attribute
-    const hasSpecialImage = monster && 'specialImage' in monster && monster.specialImage;
+    const hasSpecialImage = monster && 'specialImage' in monster && monster.specialImage
     const notInInventory = !series.some(id => playerData.card.includes(id))
+	const finalStageMonsterIdInInventory = [...series].reverse().find(id => playerData.card.includes(id) && playerData.info[id]?.number > 0)
 	
     return `
         <div class='col-4 col-md-3 col-lg-2 series_result'>
-            <img class='monster_img${notInInventory ? '_gray' : ''}' src='../tos_tool_data/img/monster/${monster?.id}.png' onerror='monsterErrorImage(this, "${monster_attr}")' onfocus=${hasSpecialImage ? `this.src="../tos_tool_data/img/monster/${monster?.id}_sp.png"` : null} onblur=${hasSpecialImage ? `this.src="../tos_tool_data/img/monster/${monster?.id}.png"` : null} tabindex=${monster?.id?.toString().replace('?', '')} data-toggle='popover' data-title='' data-content="${tooltip_content}"></img>
-			<!-- special image preload -->
-			<img class='monster_img${notInInventory ? '_gray' : ''}' style="display: none;" src=${hasSpecialImage ? `../tos_tool_data/img/monster/${monster?.id}_sp.png` : ''}>
-			<!-- -->
+			<div class='image_shell' tabindex=${monster?.id?.toString().replace('?', '')} data-toggle='popover' data-title='' data-content="${tooltip_content}">
+				${!notInInventory ? renderInfoTag(finalStageMonsterIdInInventory) : ``}
+				<img class='monster_img${notInInventory ? '_gray' : ''}' src='../tos_tool_data/img/monster/${monster?.id}.png' onerror='monsterErrorImage(this, "${monster_attr}")' onfocus=${hasSpecialImage ? `this.src="../tos_tool_data/img/monster/${monster?.id}_sp.png"` : null} onblur=${hasSpecialImage ? `this.src="../tos_tool_data/img/monster/${monster?.id}.png"` : null}></img>
+				<!-- special image preload -->
+				<img class='monster_img${notInInventory ? '_gray' : ''}' style="display: none;" src=${hasSpecialImage ? `../tos_tool_data/img/monster/${monster?.id}_sp.png` : ''}>
+				<!-- -->
+			</div>
         </div>
     `;
+}
+
+function renderInfoTag(id) {
+	const data = playerData?.info?.[id] || {}
+	const refine_src = data?.enhanceLevel < 5 ? `../tos_tool_data/img/monster/refine_${data?.enhanceLevel}.png` : '../tos_tool_data/img/monster/recall.png'
+	
+	return `
+		<div class='skill_level_tag'>
+			SLv. ${data?.skillLevel || '???'}
+		</div>
+		<div class='bottom_tag ${ data?.enhanceLevel > 0 ? `bottom_tag_long` : `` }'>
+			${ data?.enhanceLevel > 0 ?
+				`<img src="${refine_src}" />` : ``
+			}
+			<div class='level_tag ${ data?.enhanceLevel > 0 ? `level_tag_short` : ``}'>
+				${renderBottomTagContent(id)}
+			</div>
+		</div>
+	`
+}
+
+function renderBottomTagContent(id) {
+	const data = playerData?.info?.[id] || {}
+	const level = data?.level || '???'
+	const skillLevel = data?.skillLevel || 0
+	const enhanceLevel = data?.enhanceLevel || 0
+	
+	const monster = monster_data.find(monster => monster.id === id)
+	const maxLevel = monster?.maxLevel || 0
+	const maxSkill = monster?.maxSkill || 0
+	const maxRefine = monster?.maxRefine || 0
+	
+	if(level < maxLevel) return `Lv. ${level}`
+	
+	if(maxRefine > 0 && level == maxLevel && skillLevel == maxSkill && enhanceLevel == maxRefine) return '<span class="all_max_tag">All Max</span>'
+	if(level == maxLevel && skillLevel == maxSkill) return '<span class="dual_max_tag">Dual Max</span>'
+	if(level == maxLevel) return '<span class="lv_max_tag">Lv. Max</span>'
+	
+	return 'Lv. ???'
 }
 
 function renderResult() {

@@ -65,6 +65,16 @@
 	padding: 4px;
 }
 
+.series_result .image_shell {
+	position: relative;
+	width: 100%;
+	cursor: pointer;
+}
+
+.series_result .image_shell:focus {
+    outline: 3.5px #FF6666 dashed;
+}
+
 .series_result img {
 	width: 100%;
 	text-align: center;
@@ -98,8 +108,72 @@
 	filter: grayscale(100%) opacity(100%) brightness(0.8);
 }
 
-.monster_img:focus, .monster_img_gray:focus, .tooltip_monster_img:focus, .tooltip_monster_img_gray:focus {
-    outline: 3.5px #FF6666 dashed;
+.bottom_tag {
+	display: flex;
+	align-items: center;
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	height: 25%;
+	background-color: rgba(0, 0, 0, 0.7);
+}
+
+.bottom_tag img {
+	width: 25%;
+}
+
+.bottom_tag_long {
+	right: 0;
+	width: 105%;
+}
+
+.level_tag {
+    font-size: 0.5em;
+	width: 100%;
+	color: white;
+	text-align: center;
+	font-weight: bold;
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+.level_tag_short {
+	width: 75%;
+}
+
+.skill_level_tag {
+    font-size: 0.8em;
+	position: absolute;
+	padding-right: 3px;
+	top: 0;
+	width: 100%;
+	color: #ffd800;
+	text-shadow: -1px -1px 0 #9E2C0D,
+		 0   -1px 0 #9E2C0D,
+		 1px -1px 0 #9E2C0D,
+		 1px  0   0 #9E2C0D,
+		 1px  1px 0 #9E2C0D,
+		 0    1px 0 #9E2C0D,
+		-1px  1px 0 #9E2C0D,
+		-1px  0   0 #9E2C0D;
+	text-align: right;
+	font-weight: bold;
+}
+
+@media (max-width: 575px) {
+	.level_tag, .skill_level_tag {
+    font-size: 1em;
+	}
+}
+
+.lv_max_tag {
+	color: yellow;
+}
+
+.all_max_tag, .dual_max_tag {
+	color: #ffd800;
+	text-shadow: 1px 1px #9E2C0D;
+	font-style: italic;
 }
 
 .inventory {
