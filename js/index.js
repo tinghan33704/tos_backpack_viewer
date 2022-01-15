@@ -49,14 +49,9 @@ function showSeal(name)
 	const allCardTitle = [
 		'給我看清楚了，這就是油的顏色',
 		'無他，惟手油爾',
-		'油甚，油甚',
-		'油量越大，牛棚越大',
-		'在神魔，每抽了一次卡，你的背包就多了一張卡片...或一堆精魄和靈魂',
-		'我已經抽滿下面的卡啦！MH！',
+		'太油了吧',
 		'瘋頭說：「再抽更多卡！」',
-		'斗肉！萌死他咖斗！',
-		'女子氵由口屋',
-		'Nice&nbsp;Oil.'
+		'斗肉！萌死他咖斗！'
 	]
 	
 	Object.keys(sealData).forEach(genre => {
@@ -223,14 +218,15 @@ function renderMonsterSeriesImage(genreName, series, tooltip_content) {
     const hasSpecialImage = monster && 'specialImage' in monster && monster.specialImage
     const notInInventory = !series.some(id => playerData.card.includes(id))
 	const finalStageMonsterIdInInventory = [...series].reverse().find(id => playerData.card.includes(id) && playerData.info[id]?.number > 0)
+	const monsterToDisplay = !notInInventory ? monster_data.find(monster => monster.id === finalStageMonsterIdInInventory) : monster
 	
     return `
         <div class='col-4 col-md-3 col-lg-2 series_result'>
-			<div class='image_shell' tabindex=${monster?.id?.toString().replace('?', '')} data-toggle='popover' data-title='' data-content="${tooltip_content}">
+			<div class='image_shell' tabindex=${monsterToDisplay?.id?.toString().replace('?', '')} data-toggle='popover' data-title='' data-content="${tooltip_content}">
 				${!notInInventory ? renderInfoTag(finalStageMonsterIdInInventory) : ``}
-				<img class='monster_img${notInInventory ? '_gray' : ''}' src='../tos_tool_data/img/monster/${monster?.id}.png' onerror='monsterErrorImage(this, "${monster_attr}")' onfocus=${hasSpecialImage ? `this.src="../tos_tool_data/img/monster/${monster?.id}_sp.png"` : null} onblur=${hasSpecialImage ? `this.src="../tos_tool_data/img/monster/${monster?.id}.png"` : null}></img>
+				<img class='monster_img${notInInventory ? '_gray' : ''}' src='../tos_tool_data/img/monster/${monsterToDisplay?.id}.png' onerror='monsterErrorImage(this, "${monster_attr}")' onfocus=${hasSpecialImage ? `this.src="../tos_tool_data/img/monster/${monsterToDisplay?.id}_sp.png"` : null} onblur=${hasSpecialImage ? `this.src="../tos_tool_data/img/monster/${monsterToDisplay?.id}.png"` : null}></img>
 				<!-- special image preload -->
-				<img class='monster_img${notInInventory ? '_gray' : ''}' style="display: none;" src=${hasSpecialImage ? `../tos_tool_data/img/monster/${monster?.id}_sp.png` : ''}>
+				<img class='monster_img${notInInventory ? '_gray' : ''}' style="display: none;" src=${hasSpecialImage ? `../tos_tool_data/img/monster/${monsterToDisplay?.id}_sp.png` : ''}>
 				<!-- -->
 			</div>
         </div>
