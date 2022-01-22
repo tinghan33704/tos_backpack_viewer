@@ -8,18 +8,20 @@ let sealContentMonster = {}
 $(document).ready(function() {
     init()
 	
-	currentSeal = '古幣封印'
-	$('#showCoinSeal').on("click", (event) => selectSeal('古幣封印', event))
-	$('#showStoneSeal').on("click", (event) => selectSeal('魔法石封印', event))
-	$('#showIndSeal').on("click", (event) => selectSeal('獨立封印', event))
-	$('#showCrossSeal').on("click", (event) => selectSeal('合作封印', event))
+	$('.seal-row').html(renderSealTabs())
+	
+	currentSeal = Object.keys(sealContent)[0]
+	
+	Object.keys(sealContent).forEach((sealName, index) => {
+		$(`#showSeal${index}`).on("click", (event) => selectSeal(index, event))
+	})
 	
 	if(location.search) {
 		$('.card-row').html(loadingPanel())
 		readUserIdFromUrl()
 	}
 	else {
-		$('#showCoinSeal').click()
+		$('#showSeal0').click()
 		$('.uid-banner').html(playerData?.uid ? `<div>UID: ${playerData.uid}</div>` : '')
 	}
 });
@@ -30,8 +32,24 @@ function loadingPanel() {
 	`
 }
 
-function selectSeal(name, event)
+function renderSealTabs() {
+	const tabCount = Object.keys(sealContent).length
+	const tabLength = Math.trunc(12 / tabCount)
+	const marginLength = (12 - tabLength * tabCount) / 2
+	
+	let str = ''
+	if(marginLength > 0) str += `<div class='col-12 col-md-${marginLength} col-lg-${marginLength}'></div>`
+	Object.keys(sealContent).forEach((sealName, index) => {
+		str += `<div class='col-12 col-md-${tabLength} col-lg-${tabLength} seal-nav${index == 0 ? ' seal-nav-active' : ''}' id='showSeal${index}'>${sealName}</div>`
+	})
+	if(marginLength > 0) str += `<div class='col-12 col-md-${marginLength} col-lg-${marginLength}'></div>`
+	
+	return str
+}
+
+function selectSeal(index, event)
 {
+	const name = Object.keys(sealContent)[index]
 	currentSeal = name
 	
 	$('.seal-nav').removeClass('seal-nav-active')
