@@ -242,10 +242,7 @@ function renderMonsterSeriesImage(genreName, series, tooltip_content) {
         <div class='col-4 col-md-3 col-lg-2 series_result'>
 			<div class='image_shell' tabindex=${monsterToDisplay?.id?.toString().replace('?', '')} data-toggle='popover' data-title='' data-content="${tooltip_content}">
 				${!notInInventory ? renderInfoTag(finalStageMonsterIdInInventory) : ``}
-				<img class='monster_img${notInInventory ? '_gray' : ''}' src='../tos_tool_data/img/monster/${monsterToDisplay?.id}.png' onerror='monsterErrorImage(this, "${monster_attr}")' onfocus=${hasSpecialImage ? `this.src="../tos_tool_data/img/monster/${monsterToDisplay?.id}_sp.png"` : null} onblur=${hasSpecialImage ? `this.src="../tos_tool_data/img/monster/${monsterToDisplay?.id}.png"` : null}></img>
-				<!-- special image preload -->
-				<img class='monster_img${notInInventory ? '_gray' : ''}' style="display: none;" src=${hasSpecialImage ? `../tos_tool_data/img/monster/${monsterToDisplay?.id}_sp.png` : ''}>
-				<!-- -->
+				<img class='monster_img${notInInventory ? '_gray' : ''}' src='../tos_tool_data/img/monster/${monsterToDisplay?.id}.png' onerror='monsterErrorImage(this, "${monster_attr}")'></img>
 			</div>
         </div>
     `;
