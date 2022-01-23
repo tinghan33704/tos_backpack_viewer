@@ -119,9 +119,16 @@ function showSeal(name)
 		
 		allCardStr = allCardTitle[Math.floor(Math.random()*(allCardTitle.length))]
 		
+		let genreStr = genre
+		if(name.includes('自選')) {
+			const attr = attr_zh_to_en[genre.split(' ‧ ')[0].trim()[0]]
+			const race = race_zh_to_en[genre.split(' ‧ ')[1].trim()]
+			genreStr = `<img src='../tos_tool_data/img/monster/icon_${attr}.png' style='width: 1em'>&nbsp;<img src='../tos_tool_data/img/monster/icon_${race}.png' style='width: 1em'>&nbsp;${genre}`
+		}
+		
 		cardStr += '<div class="col-12 col-sm-6"><div class="row genre-row">'
 		cardStr += `
-			<div class='col-12 genre-name${(isReverseMode && mustGet) ? ' genre-name-mustGet' : (!isReverseMode && hasCard) ? ' genre-name-allCollected' : ''}' ${(isReverseMode && mustGet) ? `title=${mustGetTitle}` : (!isReverseMode && hasCard) ? `title=${allCardStr}` : ''}>${genre}</div>
+			<div class='col-12 genre-name${(isReverseMode && mustGet) ? ' genre-name-mustGet' : (!isReverseMode && hasCard) ? ' genre-name-allCollected' : ''}' ${(isReverseMode && mustGet) ? `title=${mustGetTitle}` : (!isReverseMode && hasCard) ? `title=${allCardStr}` : ''}> ${genreStr}</div>
 			${sealData[genre].map(id => {
 				const sk_str = renderMonsterSeriesInfo(genre, Array.isArray(id) ? id : [id])
 				return renderMonsterSeriesImage(genre, Array.isArray(id) ? id : [id], sk_str)
@@ -266,7 +273,6 @@ function renderMonsterSeriesImage(genreName, series, tooltip_content) {
 	const finalStage = ['新世紀福音戰士石抽', 'ROCKMAN X DiVE', '假面騎士'].includes(genreName) ? series[0] : series[series.length - 1]
 	const monster = monster_data.find(monster => monster.id === finalStage)
 	const monster_attr = !monster?.attribute?.length ? '' : monster?.attribute
-    const hasSpecialImage = monster && 'specialImage' in monster && monster.specialImage
     const notInInventory = isReverseMode ? series.some(id => playerData.card.includes(id)) : !series.some(id => playerData.card.includes(id))
 	const finalStageMonsterIdInInventory = [...series].reverse().find(id => playerData.card.includes(id) && playerData.info[id]?.number > 0)
 	const monsterToDisplay = !isReverseMode && !notInInventory ? monster_data.find(monster => monster.id === finalStageMonsterIdInInventory) : monster
@@ -274,7 +280,7 @@ function renderMonsterSeriesImage(genreName, series, tooltip_content) {
     return `
         <div class='col-4 col-md-3 col-lg-2 series_result'>
 			<div class='image_shell' tabindex=${monsterToDisplay?.id?.toString().replace('?', '')} data-toggle='popover' data-title='' data-content="${tooltip_content}">
-				${!isReverseMode && !notInInventory ? renderInfoTag(finalStageMonsterIdInInventory) : ``}
+				${(!isReverseMode && !notInInventory) ? renderInfoTag(finalStageMonsterIdInInventory) : ``}
 				<img class='monster_img${notInInventory ? '_gray' : ''}' src='../tos_tool_data/img/monster/${monsterToDisplay?.id}.png' onerror='monsterErrorImage(this, "${monster_attr}")'></img>
 			</div>
         </div>
