@@ -40,6 +40,11 @@
 	background-color: var(--div_series_genre_all_background);
 }
 
+.genre-name-mustGet {
+	color: var(--text_series_genre_must_get);
+	background-color: var(--div_series_genre_must_get_background);
+}
+
 .genre-row {
 	padding: 0 10px;
 }
@@ -174,6 +179,15 @@
 	color: #ffd800;
 	text-shadow: 1px 1px #9E2C0D;
 	font-style: italic;
+}
+
+.reverseMode-activate {
+	background-color: rgb(200, 200, 200);
+	color: gray;
+}
+
+.reverseMode {
+    bottom: 9rem;
 }
 
 .inventory {

@@ -4,6 +4,7 @@ let theme = 'normal';
 let playerData = {uid: '', card: [], info: {}}
 let currentSeal = ''
 let sealContentMonster = {}
+let isReverseMode = false 	// 反向檢視
 
 $(document).ready(function() {
     init()
@@ -24,7 +25,20 @@ $(document).ready(function() {
 		$('#showSeal0').click()
 		$('.uid-banner').html(playerData?.uid ? `<div>UID: ${playerData.uid}</div>` : '')
 	}
+    
+    $("#reverse-btn").length && $('#reverse-btn').click(() => { 
+        reverseMode();
+    });
 });
+
+function reverseMode() {
+	isReverseMode = !isReverseMode
+	
+	isReverseMode && $("#reverse-btn").addClass('reverseMode-activate')
+	!isReverseMode && $("#reverse-btn").removeClass('reverseMode-activate')
+	
+	showSeal(currentSeal)
+}
 
 function loadingPanel() {
 	return `
@@ -52,6 +66,14 @@ function selectSeal(index, event)
 	const name = Object.keys(sealContent)[index]
 	currentSeal = name
 	
+	if(currentSeal !== '九週年自選') {
+		$("#reverse-btn").hide()
+		isReverseMode = false
+		$("#reverse-btn").removeClass('reverseMode-activate')
+	} else {
+		$("#reverse-btn").show()
+	}
+	
 	$('.seal-nav').removeClass('seal-nav-active')
 	$('#'+event.target.id).addClass('seal-nav-active')
 	
@@ -72,6 +94,8 @@ function showSeal(name)
 		'斗肉！萌死他咖斗！'
 	]
 	
+	const mustGetTitle = '五選一必能選中'
+	
 	Object.keys(sealData).forEach(genre => {
 		let hasCard = false
 		sealData[genre].every(monster => {
@@ -84,11 +108,20 @@ function showSeal(name)
 			return hasCard
 		})
 		
+		let mustGet = [1, 2, 3, 4, 5].includes(sealData[genre].filter(monster => {
+			if(Array.isArray(monster)) {
+				hasCard = monster.some(id => playerData.card.includes(id))
+			} else {
+				hasCard = playerData.card.includes(monster)
+			}
+			return !hasCard
+		}).length) || sealData[genre].length <= 5
+		
 		allCardStr = allCardTitle[Math.floor(Math.random()*(allCardTitle.length))]
 		
 		cardStr += '<div class="col-12 col-sm-6"><div class="row genre-row">'
 		cardStr += `
-			<div class='col-12 genre-name ${hasCard ? 'genre-name-allCollected' : ''}' ${hasCard ? `title=${allCardStr}` : ''}>${genre}</div>
+			<div class='col-12 genre-name${(isReverseMode && mustGet) ? ' genre-name-mustGet' : (!isReverseMode && hasCard) ? ' genre-name-allCollected' : ''}' ${(isReverseMode && mustGet) ? `title=${mustGetTitle}` : (!isReverseMode && hasCard) ? `title=${allCardStr}` : ''}>${genre}</div>
 			${sealData[genre].map(id => {
 				const sk_str = renderMonsterSeriesInfo(genre, Array.isArray(id) ? id : [id])
 				return renderMonsterSeriesImage(genre, Array.isArray(id) ? id : [id], sk_str)
@@ -212,7 +245,7 @@ function renderMonsterSeriesInfo(genreName, monsters) {
 					return element.id === id
 				})
 				const monster_attr = !monster?.attribute?.length ? '' : monster?.attribute
-				const notInInventory = !playerData.card.includes(monster?.id)
+				const notInInventory = isReverseMode ? playerData.card.includes(monster?.id) : !playerData.card.includes(monster?.id)
 				return `
 					<div class='result_monster_block'>
 						<img class='tooltip_monster_img${notInInventory ? '_gray' : ''}' src='../tos_tool_data/img/monster/${monster?.id}.png' title='${monster?.name ?? ''}' onerror='monsterErrorImage(this, \`${monster_attr}\`)'></img>
@@ -234,14 +267,14 @@ function renderMonsterSeriesImage(genreName, series, tooltip_content) {
 	const monster = monster_data.find(monster => monster.id === finalStage)
 	const monster_attr = !monster?.attribute?.length ? '' : monster?.attribute
     const hasSpecialImage = monster && 'specialImage' in monster && monster.specialImage
-    const notInInventory = !series.some(id => playerData.card.includes(id))
+    const notInInventory = isReverseMode ? series.some(id => playerData.card.includes(id)) : !series.some(id => playerData.card.includes(id))
 	const finalStageMonsterIdInInventory = [...series].reverse().find(id => playerData.card.includes(id) && playerData.info[id]?.number > 0)
-	const monsterToDisplay = !notInInventory ? monster_data.find(monster => monster.id === finalStageMonsterIdInInventory) : monster
+	const monsterToDisplay = !isReverseMode && !notInInventory ? monster_data.find(monster => monster.id === finalStageMonsterIdInInventory) : monster
 	
     return `
         <div class='col-4 col-md-3 col-lg-2 series_result'>
 			<div class='image_shell' tabindex=${monsterToDisplay?.id?.toString().replace('?', '')} data-toggle='popover' data-title='' data-content="${tooltip_content}">
-				${!notInInventory ? renderInfoTag(finalStageMonsterIdInInventory) : ``}
+				${!isReverseMode && !notInInventory ? renderInfoTag(finalStageMonsterIdInInventory) : ``}
 				<img class='monster_img${notInInventory ? '_gray' : ''}' src='../tos_tool_data/img/monster/${monsterToDisplay?.id}.png' onerror='monsterErrorImage(this, "${monster_attr}")'></img>
 			</div>
         </div>
@@ -280,7 +313,7 @@ function renderBottomTagContent(id) {
 	
 	if(level < maxLevel) return `Lv. ${level}`
 	
-	if(maxRefine > 0 && level == maxLevel && skillLevel == maxSkill && enhanceLevel == maxRefine) return '<span class="all_max_tag">All Max</span>'
+	if(maxRefine > 0 && level >= maxLevel && skillLevel >= maxSkill && enhanceLevel >= maxRefine) return '<span class="all_max_tag">All Max</span>'
 	if(level == maxLevel && skillLevel == maxSkill) return '<span class="dual_max_tag">Dual Max</span>'
 	if(level == maxLevel) return '<span class="lv_max_tag">Lv. Max</span>'
 	
