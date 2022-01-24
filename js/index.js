@@ -97,24 +97,20 @@ function showSeal(name)
 	const mustGetTitle = '五選一必能選中'
 	
 	Object.keys(sealData).forEach(genre => {
-		let hasCard = false
-		sealData[genre].every(monster => {
+		const hasCard = sealData[genre].every(monster => {
 			if(Array.isArray(monster)) {
-				hasCard = monster.some(id => playerData.card.includes(id))
+				return monster.some(id => playerData.card.includes(id))
 			} else {
-				hasCard = playerData.card.includes(monster)
+				return playerData.card.includes(monster)
 			}
-			
-			return hasCard
 		})
 		
-		let mustGet = [1, 2, 3, 4, 5].includes(sealData[genre].filter(monster => {
+		const mustGet = [1, 2, 3, 4, 5].includes(sealData[genre].filter(monster => {
 			if(Array.isArray(monster)) {
-				hasCard = monster.some(id => playerData.card.includes(id))
+				return !monster.some(id => playerData.card.includes(id))
 			} else {
-				hasCard = playerData.card.includes(monster)
+				return !playerData.card.includes(monster)
 			}
-			return !hasCard
 		}).length) || sealData[genre].length <= 5
 		
 		allCardStr = allCardTitle[Math.floor(Math.random()*(allCardTitle.length))]
