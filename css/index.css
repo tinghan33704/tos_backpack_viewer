@@ -7,6 +7,14 @@
 	align-items: center;
 }
 
+.update-banner {
+    font-size: 1.2em;
+    color: rgba(214, 214, 214, 0.6);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
 @media (max-width: 992px) {
 	.uid-banner {
 		justify-content: center;

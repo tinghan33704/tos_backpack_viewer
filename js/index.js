@@ -98,19 +98,11 @@ function showSeal(name)
 	
 	Object.keys(sealData).forEach(genre => {
 		const hasCard = sealData[genre].every(monster => {
-			if(Array.isArray(monster)) {
-				return monster.some(id => playerData.card.includes(id))
-			} else {
-				return playerData.card.includes(monster)
-			}
+			return Array.isArray(monster) ? monster.some(id => playerData.card.includes(id)) : playerData.card.includes(monster)
 		})
 		
-		const mustGet = [1, 2, 3, 4, 5].includes(sealData[genre].filter(monster => {
-			if(Array.isArray(monster)) {
-				return !monster.some(id => playerData.card.includes(id))
-			} else {
-				return !playerData.card.includes(monster)
-			}
+		const mustGet = [...Array(5).keys()].map(i => i+1).includes(sealData[genre].filter(monster => {
+			return Array.isArray(monster) ? !monster.some(id => playerData.card.includes(id)) : !playerData.card.includes(monster)
 		}).length) || sealData[genre].length <= 5
 		
 		allCardStr = allCardTitle[Math.floor(Math.random()*(allCardTitle.length))]
