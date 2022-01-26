@@ -197,6 +197,10 @@
 	color: gray;
 }
 
+.compressMode {
+    bottom: 13rem;
+}
+
 .reverseMode {
     bottom: 9rem;
 }
