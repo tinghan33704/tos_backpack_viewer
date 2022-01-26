@@ -87,7 +87,7 @@ function selectSeal(index, event)
 		
 		$("#compress-btn").hide()
 		isCompressMode = false
-		$("#compress-btn").removeClass('reverseMode-activate')
+		$("#compress-btn").html('<i class="fa fa-compress"></i>').removeClass('reverseMode-activate')
 	} else {
 		$("#reverse-btn").show()
 		$("#compress-btn").show()
