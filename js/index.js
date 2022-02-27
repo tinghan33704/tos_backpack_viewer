@@ -10,6 +10,13 @@ let isCompressMode = false	// 去除已有召喚獸檢視
 $(document).ready(function() {
     init()
 	
+	const currentTime = new Date().getTime()
+	const startTime = new Date('2022-01-27T00:00:00+0800').getTime()
+	const endTime = new Date('2022-05-22T23:59:59+0800').getTime();
+	if(currentTime < startTime || currentTime > endTime) {
+		delete sealContent[Object.keys(sealContent).find(name => name.includes('自選'))]
+	}
+	
 	$('.seal-row').html(renderSealTabs())
 	
 	currentSeal = Object.keys(sealContent)[0]
