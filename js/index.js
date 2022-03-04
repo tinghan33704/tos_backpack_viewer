@@ -286,7 +286,7 @@ function renderMonsterSeriesInfo(genreName, monsters) {
 }
 
 function renderMonsterSeriesImage(genreName, series, tooltip_content) {
-	const finalStage = ['新世紀福音戰士石抽', 'ROCKMAN X DiVE', '假面騎士'].includes(genreName) ? series[0] : series[series.length - 1]
+	const finalStage = ['新世紀福音戰士石抽', 'ROCKMAN X DiVE', '假面騎士', '大江戶'].includes(genreName) ? series[0] : series[series.length - 1]
 	const monster = monster_data.find(monster => monster.id === finalStage)
 	const monster_attr = !monster?.attribute?.length ? '' : monster?.attribute
     const notInInventory = isReverseMode ? series.some(id => playerData.card.includes(id)) : !series.some(id => playerData.card.includes(id))
