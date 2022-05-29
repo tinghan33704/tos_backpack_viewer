@@ -357,6 +357,7 @@ function readUserIdFromUrl() {
 	
 	if(code_array[0] !== 'uid') {
 		errorAlert(1)
+		window.location = 'https://tinghan33704.github.io/tos_backpack_viewer/tos_backpack_viewer.html'
 		return
 	}
 	
