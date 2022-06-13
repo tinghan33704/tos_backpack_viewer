@@ -22,7 +22,7 @@
 }
 
 .seal-row {
-	margin-bottom: 5px;
+	margin-bottom: 0px;
     font-size: 1.6em;
 }
 
@@ -31,6 +31,10 @@
 }
 .seal-nav-active {
 	font-weight: bold;
+}
+
+.seal-hr {
+	margin-top: 0px;
 }
 
 .genre-name {
