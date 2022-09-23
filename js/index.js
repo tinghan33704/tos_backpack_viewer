@@ -7,7 +7,17 @@ let sealContentMonster = {}
 let isReverseMode = false 	// 反向檢視
 let isCompressMode = false	// 去除已有召喚獸檢視
 
+const cardCategory = ['all', 'non-crossover', 'crossover'];
+const cardCategoryTextArr = ['全部', '自家', '合作']
+let currentCardCategory = 'all'	// 自家/合作檢視 (all, non-crossover, crossover)
+
+const showFirstStageAsEmptyPreview = ['新世紀福音戰士石抽', 'ROCKMAN X DiVE', '假面騎士', '大江戶', '怪物彈珠精選']
+const showFinalStageEvenNotExist = ['強力武裝', '戰鬥魔導士', '百變騎士', '騰雲逸龍', '變形金屬']
+
 $(document).ready(function() {
+	$("#reverse-btn").hide()
+	$("#compress-btn").hide()
+	$("#crossover-btn").hide()
     init()
 	
 	const currentTime = new Date().getTime()
@@ -42,6 +52,10 @@ $(document).ready(function() {
     $("#compress-btn").length && $('#compress-btn').click(() => { 
         compressMode();
     });
+    
+    $("#crossover-btn").length && $('#crossover-btn').click(() => { 
+        changeCardCategory();
+    });
 });
 
 function reverseMode() {
@@ -58,6 +72,14 @@ function compressMode() {
 	
 	isCompressMode && $("#compress-btn").html('<i class="fa fa-expand"></i>').addClass('reverseMode-activate')
 	!isCompressMode && $("#compress-btn").html('<i class="fa fa-compress"></i>').removeClass('reverseMode-activate')
+	
+	showSeal(currentSeal)
+}
+
+function changeCardCategory() {
+	const nextIndex = (cardCategory.indexOf(currentCardCategory) + 1) % cardCategory.length
+	currentCardCategory = cardCategory[nextIndex]
+	$("#crossover-btn").html(cardCategoryTextArr[nextIndex])
 	
 	showSeal(currentSeal)
 }
@@ -88,7 +110,12 @@ function selectSeal(index, event)
 	const name = Object.keys(sealContent)[index]
 	currentSeal = name
 	
-	if(!currentSeal.endsWith('自選')) {
+	if(currentSeal.endsWith('自選')) {
+		$("#crossover-btn").hide()
+		
+		$("#reverse-btn").show()
+		$("#compress-btn").show()
+	} else if(currentSeal === '其他卡片') {
 		$("#reverse-btn").hide()
 		isReverseMode = false
 		$("#reverse-btn").removeClass('reverseMode-activate')
@@ -96,9 +123,18 @@ function selectSeal(index, event)
 		$("#compress-btn").hide()
 		isCompressMode = false
 		$("#compress-btn").html('<i class="fa fa-compress"></i>').removeClass('reverseMode-activate')
+		
+		$("#crossover-btn").show()
 	} else {
-		$("#reverse-btn").show()
-		$("#compress-btn").show()
+		$("#reverse-btn").hide()
+		isReverseMode = false
+		$("#reverse-btn").removeClass('reverseMode-activate')
+		
+		$("#compress-btn").hide()
+		isCompressMode = false
+		$("#compress-btn").html('<i class="fa fa-compress"></i>').removeClass('reverseMode-activate')
+		
+		$("#crossover-btn").hide()
 	}
 	
 	$('.seal-nav').removeClass('seal-nav-active')
@@ -121,31 +157,76 @@ function showSeal(name)
 		'斗肉！萌死他咖斗！'
 	]
 	
+	const allCardOtherTitle = [
+		'讓你見識見識什麼才叫做牛棚'
+	]
+	
 	const mustGetTitle = '五選一必能選中'
 	
 	Object.keys(sealData).forEach(genre => {
-		const hasCard = sealData[genre].every(monster => {
-			return Array.isArray(monster) ? monster.some(id => playerData.card.includes(id)) : playerData.card.includes(monster)
-		})
+		let cardData = sealData[genre]
 		
 		const mustGet = [...Array(5).keys()].map(i => i+1).includes(sealData[genre].filter(monster => {
 			return Array.isArray(monster) ? !monster.some(id => playerData.card.includes(id)) : !playerData.card.includes(monster)
 		}).length) || sealData[genre].length <= 5
 		
-		allCardStr = allCardTitle[Math.floor(Math.random()*(allCardTitle.length))]
+		allCardStr = !name.includes('其他卡片') ? allCardTitle[Math.floor(Math.random()*(allCardTitle.length))] : allCardOtherTitle[Math.floor(Math.random()*(allCardOtherTitle.length))]
 		
 		let genreStr = genre
 		if(name.includes('自選')) {
 			const attr = attr_zh_to_en[genre.split(' ‧ ')[0].trim()[0]]
 			const race = race_zh_to_en[genre.split(' ‧ ')[1].trim()]
 			genreStr = `<img src='../tos_tool_data/img/monster/icon_${attr}.png' style='width: 1em'>&nbsp;<img src='../tos_tool_data/img/monster/icon_${race}.png' style='width: 1em'>&nbsp;${genre}`
+		} 
+		if(name.includes('其他卡片')) {
+			function isCardInCorrectCategory(id) {
+				const allCategory = currentCardCategory === 'all'
+				const onlyNonCrossOver = currentCardCategory === 'non-crossover'
+				const onlyCrossOver = currentCardCategory === 'crossover'
+				
+				const isCardCrossOver = monster_data.find(monster => monster.id === id)?.crossOver
+				
+				return allCategory || (onlyNonCrossOver && !isCardCrossOver) || (onlyCrossOver && isCardCrossOver)
+			}
+			
+			let cardSet = new Set()
+			sealData[genre].forEach(card => {
+				if(typeof card === 'string') {
+					const tagFilteredMonster = monster_data.filter((element) => {
+						return element?.monsterTag.includes(card)
+					}).filter(element => isCardInCorrectCategory(element.id))?.map(info => info.id)
+					
+					tagFilteredMonster.forEach(monster => cardSet.add(monster))
+				} else {
+					if(Array.isArray(card)) {
+						card.forEach(c => {
+							if(cardSet.has(c)) cardSet.delete(c)
+						})
+						card.every(c => isCardInCorrectCategory(c)) && cardSet.add(card)
+					} else {
+						if(card > 0 && isCardInCorrectCategory(card)) cardSet.add(card)
+						else cardSet.delete(-card)
+					}
+				}
+			})
+			cardData = [...cardSet].sort((a, b) => {
+				const ca = Array.isArray(a) ? a[0] : a
+				const cb = Array.isArray(b) ? b[0] : b
+				return ca - cb
+			})
 		}
 		
-		if(!isCompressMode || !hasCard) {
+		const hasCard = showFinalStageEvenNotExist.includes(genre) ? cardData.every(monster => {
+			return Array.isArray(monster) ? playerData.card.includes([...monster].reverse()[0]) : playerData.card.includes(monster)
+		}) : cardData.every(monster => {
+			return Array.isArray(monster) ? monster.some(id => playerData.card.includes(id)) : playerData.card.includes(monster)
+		})
+		
+		if(cardData.length > 0 && (!isCompressMode || !hasCard)) {
 			cardStr += '<div class="col-12 col-sm-6"><div class="row genre-row">'
 			cardStr += `
 				<div class='col-12 genre-name${(isReverseMode && mustGet) ? ' genre-name-mustGet' : (!isReverseMode && hasCard) ? ' genre-name-allCollected' : ''}' ${(isReverseMode && mustGet) ? `title=${mustGetTitle}` : (!isReverseMode && hasCard) ? `title=${allCardStr}` : ''}> ${genreStr}</div>
-				${sealData[genre].map(id => {
+				${cardData.map(id => {
 					const sk_str = renderMonsterSeriesInfo(genre, Array.isArray(id) ? id : [id])
 					return renderMonsterSeriesImage(genre, Array.isArray(id) ? id : [id], sk_str)
 				}).join('')}
@@ -287,11 +368,11 @@ function renderMonsterSeriesInfo(genreName, monsters) {
 }
 
 function renderMonsterSeriesImage(genreName, series, tooltip_content) {
-	const finalStage = ['新世紀福音戰士石抽', 'ROCKMAN X DiVE', '假面騎士', '大江戶', '怪物彈珠精選'].includes(genreName) ? series[0] : series[series.length - 1]
+	const finalStage = showFirstStageAsEmptyPreview.includes(genreName) ? series[0] : series[series.length - 1]
 	const monster = monster_data.find(monster => monster.id === finalStage)
 	const monster_attr = !monster?.attribute?.length ? '' : monster?.attribute
-    const notInInventory = isReverseMode ? series.some(id => playerData.card.includes(id)) : !series.some(id => playerData.card.includes(id))
-	const finalStageMonsterIdInInventory = [...series].reverse().find(id => playerData.card.includes(id) && playerData.info[id]?.number > 0)
+    const notInInventory = isReverseMode ? series.some(id => playerData.card.includes(id)) : showFinalStageEvenNotExist.includes(genreName) ? !playerData.card.includes([...series].reverse()[0]) : !series.some(id => playerData.card.includes(id))
+	const finalStageMonsterIdInInventory = showFinalStageEvenNotExist.includes(genreName) ? [...series].reverse()[0] : [...series].reverse().find(id => playerData.card.includes(id) && playerData.info[id]?.number > 0)
 	const monsterToDisplay = !isReverseMode && !notInInventory ? monster_data.find(monster => monster.id === finalStageMonsterIdInInventory) : monster
 	const shouldShowImage = isCompressMode ? isReverseMode ? !notInInventory : notInInventory : true
 	

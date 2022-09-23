@@ -201,16 +201,25 @@
 	color: gray;
 }
 
+.reverseMode, .compressMode, .crossOver {
+	display: none;
+}
+
 .compressMode {
     bottom: 13rem;
 }
 
-.reverseMode {
+.reverseMode, .crossOver {
     bottom: 9rem;
 }
 
 .inventory {
     bottom: 5rem;
+}
+
+.crossOver {
+    font-size: 1rem;
+	font-weight: bold;
 }
 
 .monsterCount, .monsterCount_gray {
