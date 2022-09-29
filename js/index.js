@@ -258,7 +258,7 @@ function showSeal(name)
 		}).appendTo('body');
 	}
 	
-	$('.monster_img[src$="/10294.png"]').click(function(e){
+	$('img[class^="monster_img"][src$="/10294.png"]').click(function(e){
 		showGlassBreak(event.pageX, event.pageY)
 	});
 }
